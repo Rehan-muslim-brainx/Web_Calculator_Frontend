@@ -515,8 +515,7 @@ export default function UserCalculator() {
         anniversaryDate: data.labor.anniversaryDate,
       },
     }
-    console.log('Submitting phases:', payload.phases.map(p => ({ name: p.name, curveId: p.curveId })))
-    console.log('Phase 1 curveId:', payload.phases[0]?.curveId)
+    console.log('Phase curveIds being sent:', payload.phases.map(p => ({ name: p.name, curveId: p.curveId })))
     try {
       const { data: result } = await api.post('/api/calculate', payload)
       setResults(result)
