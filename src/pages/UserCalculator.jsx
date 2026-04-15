@@ -515,6 +515,8 @@ export default function UserCalculator() {
         anniversaryDate: data.labor.anniversaryDate,
       },
     }
+    console.log('Form data being submitted:', JSON.stringify(payload, null, 2))
+    console.log('Phase 1 curveId:', payload.phases[0]?.curveId)
     try {
       const { data: result } = await api.post('/api/calculate', payload)
       setResults(result)
