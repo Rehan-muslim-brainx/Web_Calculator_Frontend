@@ -193,10 +193,111 @@ function RightPanelPlaceholder() {
   )
 }
 
+// ── Phase breakdown table ──────────────────────────────────────────────────
+
+function PhaseBreakdownCard({ phaseBreakdown }) {
+  if (!phaseBreakdown || phaseBreakdown.length === 0) return null
+
+  return (
+    <>
+      {phaseBreakdown.map((phase, pIdx) => (
+        <div key={pIdx} className={cardCls} style={cardShadow}>
+          <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+            Phase: {phase.phaseName}
+          </h3>
+
+          {/* Materials */}
+          <p className="text-xs font-bold text-purple-700 uppercase tracking-wider mb-2">Materials</p>
+          <div className="overflow-x-auto rounded-xl border border-gray-100 mb-4">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                  <th className="text-left px-4 py-2.5 font-medium">Type</th>
+                  <th className="text-right px-3 py-2.5 font-medium">Original</th>
+                  <th className="text-right px-3 py-2.5 font-medium">Escalated</th>
+                  <th className="text-right px-3 py-2.5 font-medium">Diff</th>
+                  <th className="text-right px-4 py-2.5 font-medium">%</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {phase.materials.map((mat, mIdx) => (
+                  <tr key={mIdx}>
+                    <td className="px-4 py-2 text-gray-700 text-xs">{mat.name}</td>
+                    <td className="px-3 py-2 text-right text-gray-600 text-xs">{usd(mat.budgeted)}</td>
+                    <td className="px-3 py-2 text-right text-gray-600 text-xs">{usd(mat.escalated)}</td>
+                    <td className="px-3 py-2 text-right text-xs"><DiffCell value={mat.difference} /></td>
+                    <td className="px-4 py-2 text-right text-gray-600 text-xs">{pct(mat.escPercent)}</td>
+                  </tr>
+                ))}
+                <tr className="bg-purple-50 font-semibold">
+                  <td className="px-4 py-2 text-purple-800 text-xs">Materials Total</td>
+                  <td className="px-3 py-2 text-right text-purple-800 text-xs">{usd(phase.phaseMaterialTotal.budgeted)}</td>
+                  <td className="px-3 py-2 text-right text-purple-800 text-xs">{usd(phase.phaseMaterialTotal.escalated)}</td>
+                  <td className="px-3 py-2 text-right text-xs"><DiffCell value={phase.phaseMaterialTotal.difference} /></td>
+                  <td className="px-4 py-2 text-right text-purple-800 text-xs">{pct(phase.phaseMaterialTotal.escPercent)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Labor */}
+          <p className="text-xs font-bold text-red-700 uppercase tracking-wider mb-2">Labor</p>
+          <div className="overflow-x-auto rounded-xl border border-gray-100 mb-4">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
+                  <th className="text-left px-4 py-2.5 font-medium">Type</th>
+                  <th className="text-right px-3 py-2.5 font-medium">Original</th>
+                  <th className="text-right px-3 py-2.5 font-medium">Escalated</th>
+                  <th className="text-right px-3 py-2.5 font-medium">Diff</th>
+                  <th className="text-right px-4 py-2.5 font-medium">%</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {phase.labors.map((lab, lIdx) => (
+                  <tr key={lIdx}>
+                    <td className="px-4 py-2 text-gray-700 text-xs">{lab.name}</td>
+                    <td className="px-3 py-2 text-right text-gray-600 text-xs">{usd(lab.budgeted)}</td>
+                    <td className="px-3 py-2 text-right text-gray-600 text-xs">{usd(lab.escalated)}</td>
+                    <td className="px-3 py-2 text-right text-xs"><DiffCell value={lab.difference} /></td>
+                    <td className="px-4 py-2 text-right text-gray-600 text-xs">{pct(lab.escPercent)}</td>
+                  </tr>
+                ))}
+                <tr className="bg-red-50 font-semibold">
+                  <td className="px-4 py-2 text-red-800 text-xs">Labor Total</td>
+                  <td className="px-3 py-2 text-right text-red-800 text-xs">{usd(phase.phaseLaborTotal.budgeted)}</td>
+                  <td className="px-3 py-2 text-right text-red-800 text-xs">{usd(phase.phaseLaborTotal.escalated)}</td>
+                  <td className="px-3 py-2 text-right text-xs"><DiffCell value={phase.phaseLaborTotal.difference} /></td>
+                  <td className="px-4 py-2 text-right text-red-800 text-xs">{pct(phase.phaseLaborTotal.escPercent)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Phase grand total */}
+          <div className="overflow-x-auto rounded-xl border border-[#1e3a5f]/20">
+            <table className="w-full text-sm">
+              <tbody>
+                <tr className="bg-[#1e3a5f]/10 font-bold">
+                  <td className="px-4 py-2.5 text-[#1e3a5f] text-xs">Phase Grand Total</td>
+                  <td className="px-3 py-2.5 text-right text-[#1e3a5f] text-xs">{usd(phase.phaseTotal.budgeted)}</td>
+                  <td className="px-3 py-2.5 text-right text-[#1e3a5f] text-xs">{usd(phase.phaseTotal.escalated)}</td>
+                  <td className="px-3 py-2.5 text-right text-xs"><DiffCell value={phase.phaseTotal.difference} /></td>
+                  <td className="px-4 py-2.5 text-right text-[#1e3a5f] text-xs">{pct(phase.phaseTotal.escPercent)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
+
 // ── Right panel — real results ─────────────────────────────────────────────
 
 function ResultsPanel({ results, formData, onClear }) {
-  const { summary, weeklyData } = results
+  const { summary, weeklyData, phaseBreakdown } = results
   const [exporting, setExporting] = useState(false)
   const [weeklyOpen, setWeeklyOpen] = useState(false)
 
@@ -207,7 +308,6 @@ function ResultsPanel({ results, formData, onClear }) {
   async function handleExportPdf() {
     setExporting(true)
     try {
-      // Capture each chart as a base64 PNG before sending to backend
       const captureOpts = { backgroundColor: '#ffffff', pixelRatio: 2, quality: 1.0 }
       let materialChartImg, laborChartImg, hoursChartImg
       try {
@@ -332,6 +432,9 @@ function ResultsPanel({ results, formData, onClear }) {
         </div>
       </div>
 
+      {/* Phase Breakdown */}
+      <PhaseBreakdownCard phaseBreakdown={phaseBreakdown} />
+
       {/* Chart 1 — Cumulative Material */}
       <div className={cardCls} style={cardShadow}>
         <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Cumulative Material Cost</h3>
@@ -436,14 +539,184 @@ function ResultsPanel({ results, formData, onClear }) {
   )
 }
 
+// ── Per-phase materials sub-array ──────────────────────────────────────────
+
+function PhaseMaterialsFields({ phaseIndex, control, register, errors }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `phases.${phaseIndex}.materials`,
+  })
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center gap-1">
+          <Package size={11} style={{ color: '#a78bfa' }} /> Materials
+        </span>
+        {fields.length < 5 && (
+          <button type="button"
+            onClick={() => append({ name: '', budget: '', escalationPercent: '', anniversaryDate: '' })}
+            className="text-xs text-purple-300 hover:text-purple-200 font-semibold transition-colors flex items-center gap-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add
+          </button>
+        )}
+      </div>
+      <div className="space-y-3">
+        {fields.map((field, mIdx) => (
+          <div key={field.id} className="bg-white/5 rounded-lg p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-purple-200/70">Material {mIdx + 1}</span>
+              {mIdx > 0 && (
+                <button type="button" onClick={() => remove(mIdx)}
+                  className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors">
+                  Remove
+                </button>
+              )}
+            </div>
+            <div>
+              <Label required>Name</Label>
+              <Input
+                registration={register(`phases.${phaseIndex}.materials.${mIdx}.name`, { required: 'Required' })}
+                error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.name}
+                placeholder="e.g. Insulation" />
+              <FieldError error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.name} />
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="col-span-3 sm:col-span-1">
+                <Label required>Budget ($)</Label>
+                <Input type="number" min="0" step="0.01"
+                  registration={register(`phases.${phaseIndex}.materials.${mIdx}.budget`, {
+                    required: 'Required', min: { value: 0.01, message: '> 0' }
+                  })}
+                  error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.budget}
+                  placeholder="0.00" />
+                <FieldError error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.budget} />
+              </div>
+              <div>
+                <Label required>Esc. %</Label>
+                <Input type="number" min="0" step="0.01"
+                  registration={register(`phases.${phaseIndex}.materials.${mIdx}.escalationPercent`, {
+                    required: 'Required', min: { value: 0, message: '≥ 0' }
+                  })}
+                  error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.escalationPercent}
+                  placeholder="0.00" />
+                <FieldError error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.escalationPercent} />
+              </div>
+              <div>
+                <Label required>Anniv. Date</Label>
+                <Input type="date"
+                  registration={register(`phases.${phaseIndex}.materials.${mIdx}.anniversaryDate`, { required: 'Required' })}
+                  error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.anniversaryDate} />
+                <FieldError error={errors.phases?.[phaseIndex]?.materials?.[mIdx]?.anniversaryDate} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Per-phase labors sub-array ─────────────────────────────────────────────
+
+function PhaseLaborsFields({ phaseIndex, control, register, errors }) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `phases.${phaseIndex}.labors`,
+  })
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-bold text-red-300 uppercase tracking-wider flex items-center gap-1">
+          <Users size={11} style={{ color: '#f87171' }} /> Labor
+        </span>
+        {fields.length < 5 && (
+          <button type="button"
+            onClick={() => append({ name: '', budget: '', escalationPercent: '', anniversaryDate: '' })}
+            className="text-xs text-red-300 hover:text-red-200 font-semibold transition-colors flex items-center gap-1">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add
+          </button>
+        )}
+      </div>
+      <div className="space-y-3">
+        {fields.map((field, lIdx) => (
+          <div key={field.id} className="bg-white/5 rounded-lg p-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-red-200/70">Labor {lIdx + 1}</span>
+              {lIdx > 0 && (
+                <button type="button" onClick={() => remove(lIdx)}
+                  className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors">
+                  Remove
+                </button>
+              )}
+            </div>
+            <div>
+              <Label required>Name</Label>
+              <Input
+                registration={register(`phases.${phaseIndex}.labors.${lIdx}.name`, { required: 'Required' })}
+                error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.name}
+                placeholder="e.g. Insulator" />
+              <FieldError error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.name} />
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="col-span-3 sm:col-span-1">
+                <Label required>Budget ($)</Label>
+                <Input type="number" min="0" step="0.01"
+                  registration={register(`phases.${phaseIndex}.labors.${lIdx}.budget`, {
+                    required: 'Required', min: { value: 0.01, message: '> 0' }
+                  })}
+                  error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.budget}
+                  placeholder="0.00" />
+                <FieldError error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.budget} />
+              </div>
+              <div>
+                <Label required>Esc. %</Label>
+                <Input type="number" min="0" step="0.01"
+                  registration={register(`phases.${phaseIndex}.labors.${lIdx}.escalationPercent`, {
+                    required: 'Required', min: { value: 0, message: '≥ 0' }
+                  })}
+                  error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.escalationPercent}
+                  placeholder="0.00" />
+                <FieldError error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.escalationPercent} />
+              </div>
+              <div>
+                <Label required>Anniv. Date</Label>
+                <Input type="date"
+                  registration={register(`phases.${phaseIndex}.labors.${lIdx}.anniversaryDate`, { required: 'Required' })}
+                  error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.anniversaryDate} />
+                <FieldError error={errors.phases?.[phaseIndex]?.labors?.[lIdx]?.anniversaryDate} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ── Constants ──────────────────────────────────────────────────────────────
+
+const EMPTY_PHASE = {
+  name: '',
+  startDate: '',
+  endDate: '',
+  estimatedHours: '',
+  curveId: '',
+  materials: [{ name: '', budget: '', escalationPercent: '', anniversaryDate: '' }],
+  labors:    [{ name: '', budget: '', escalationPercent: '', anniversaryDate: '' }],
+}
 
 const EMPTY_DEFAULTS = {
   projectInfo: { estimateNumber: '', bidTracerNumber: '', date: '', bidDate: '' },
   schedule: { startDate: '', endDate: '' },
-  phases: [{ name: '', startDate: '', endDate: '', estimatedHours: '', curveId: '' }],
-  materials: { budget: '', escalationPercent: '', anniversaryDate: '' },
-  labor: { budget: '', escalationPercent: '', anniversaryDate: '' },
+  phases: [{ ...EMPTY_PHASE }],
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────
@@ -456,7 +729,6 @@ export default function UserCalculator() {
   const [results, setResults] = useState(null)
   const [savedFormData, setSavedFormData] = useState(null)
 
-  // ── Unchanged form logic ─────────────────────────────────────────────────
   const {
     register, control, handleSubmit, watch, setError, reset,
     formState: { errors, isSubmitting },
@@ -464,9 +736,13 @@ export default function UserCalculator() {
 
   const { fields, append, remove } = useFieldArray({ control, name: 'phases' })
 
-  const matBudget = watch('materials.budget')
-  const labBudget = watch('labor.budget')
-  const totalBudget = (parseFloat(matBudget) || 0) + (parseFloat(labBudget) || 0)
+  // Compute total budget from all phases' materials + labors
+  const watchedPhases = watch('phases')
+  const totalBudget = (watchedPhases || []).reduce((total, phase) => {
+    const matSum = (phase.materials || []).reduce((s, m) => s + (parseFloat(m.budget) || 0), 0)
+    const labSum = (phase.labors    || []).reduce((s, l) => s + (parseFloat(l.budget) || 0), 0)
+    return total + matSum + labSum
+  }, 0)
 
   useEffect(() => {
     if (location.state?.formData) reset(location.state.formData)
@@ -503,19 +779,26 @@ export default function UserCalculator() {
     const payload = {
       projectInfo: data.projectInfo,
       schedule: data.schedule,
-      phases: data.phases.map(p => ({ ...p, estimatedHours: parseFloat(p.estimatedHours) })),
-      materials: {
-        budget: parseFloat(data.materials.budget),
-        escalationPercent: parseFloat(data.materials.escalationPercent),
-        anniversaryDate: data.materials.anniversaryDate,
-      },
-      labor: {
-        budget: parseFloat(data.labor.budget),
-        escalationPercent: parseFloat(data.labor.escalationPercent),
-        anniversaryDate: data.labor.anniversaryDate,
-      },
+      phases: data.phases.map(p => ({
+        name: p.name,
+        startDate: p.startDate,
+        endDate: p.endDate,
+        estimatedHours: parseFloat(p.estimatedHours),
+        curveId: p.curveId,
+        materials: (p.materials || []).map(m => ({
+          name: m.name,
+          budget: parseFloat(m.budget),
+          escalationPercent: parseFloat(m.escalationPercent),
+          anniversaryDate: m.anniversaryDate,
+        })),
+        labors: (p.labors || []).map(l => ({
+          name: l.name,
+          budget: parseFloat(l.budget),
+          escalationPercent: parseFloat(l.escalationPercent),
+          anniversaryDate: l.anniversaryDate,
+        })),
+      })),
     }
-    console.log('Phase curveIds being sent:', payload.phases.map(p => ({ name: p.name, curveId: p.curveId })))
     try {
       const { data: result } = await api.post('/api/calculate', payload)
       setResults(result)
@@ -524,7 +807,6 @@ export default function UserCalculator() {
       toast.error(err.response?.data?.error || 'Calculation failed. Please try again.')
     }
   }
-  // ── End unchanged logic ───────────────────────────────────────────────────
 
   if (loadingCurves) {
     return (
@@ -636,7 +918,7 @@ export default function UserCalculator() {
               </div>
             </SidebarSection>
 
-            {/* SECTION 3 — Phases */}
+            {/* SECTION 3 — Phases (with per-phase materials & labor) */}
             <SidebarSection title="Phases" icon={Layers} accent="#fb923c" delay={200}>
               <div className="space-y-5">
                 {fields.map((field, index) => (
@@ -647,7 +929,7 @@ export default function UserCalculator() {
                       {index > 0 && (
                         <button type="button" onClick={() => remove(index)}
                           className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors">
-                          Remove
+                          Remove Phase
                         </button>
                       )}
                     </div>
@@ -698,11 +980,27 @@ export default function UserCalculator() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Per-phase Materials */}
+                    <PhaseMaterialsFields
+                      phaseIndex={index}
+                      control={control}
+                      register={register}
+                      errors={errors}
+                    />
+
+                    {/* Per-phase Labor */}
+                    <PhaseLaborsFields
+                      phaseIndex={index}
+                      control={control}
+                      register={register}
+                      errors={errors}
+                    />
                   </div>
                 ))}
                 {fields.length < 3 && (
                   <button type="button"
-                    onClick={() => append({ name: '', startDate: '', endDate: '', estimatedHours: '', curveId: '' })}
+                    onClick={() => append({ ...EMPTY_PHASE })}
                     className="flex items-center gap-1.5 text-xs font-semibold text-orange-300 hover:text-orange-200 transition-colors mt-1">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -713,73 +1011,14 @@ export default function UserCalculator() {
               </div>
             </SidebarSection>
 
-            {/* SECTION 4 — Materials */}
-            <SidebarSection title="Materials" icon={Package} accent="#a78bfa" delay={300}>
-              <div className="space-y-3">
-                <div>
-                  <Label required>Material Budget ($)</Label>
-                  <Input type="number" min="0" step="0.01"
-                    registration={register('materials.budget', { required: 'Required', min: { value: 0.01, message: 'Must be greater than 0' } })}
-                    error={errors.materials?.budget} placeholder="$0.00" />
-                  <FieldError error={errors.materials?.budget} />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label required>Escalation % / Year</Label>
-                    <Input type="number" min="0" step="0.01"
-                      registration={register('materials.escalationPercent', { required: 'Required', min: { value: 0, message: 'Cannot be negative' } })}
-                      error={errors.materials?.escalationPercent} placeholder="0.00" />
-                    <FieldError error={errors.materials?.escalationPercent} />
-                  </div>
-                  <div>
-                    <Label required>Anniversary Date</Label>
-                    <Input type="date" registration={register('materials.anniversaryDate', { required: 'Required' })}
-                      error={errors.materials?.anniversaryDate} />
-                    <FieldError error={errors.materials?.anniversaryDate} />
-                  </div>
-                </div>
-              </div>
-            </SidebarSection>
-
-            {/* SECTION 5 — Labor */}
-            <SidebarSection title="Labor" icon={Users} accent="#f87171" delay={400}>
-              <div className="space-y-3">
-                <div>
-                  <Label required>Labor Budget ($)</Label>
-                  <Input type="number" min="0" step="0.01"
-                    registration={register('labor.budget', { required: 'Required', min: { value: 0.01, message: 'Must be greater than 0' } })}
-                    error={errors.labor?.budget} placeholder="$0.00" />
-                  <FieldError error={errors.labor?.budget} />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label required>Escalation % / Year</Label>
-                    <Input type="number" min="0" step="0.01"
-                      registration={register('labor.escalationPercent', { required: 'Required', min: { value: 0, message: 'Cannot be negative' } })}
-                      error={errors.labor?.escalationPercent} placeholder="0.00" />
-                    <FieldError error={errors.labor?.escalationPercent} />
-                  </div>
-                  <div>
-                    <Label required>Anniversary Date</Label>
-                    <Input type="date" registration={register('labor.anniversaryDate', { required: 'Required' })}
-                      error={errors.labor?.anniversaryDate} />
-                    <FieldError error={errors.labor?.anniversaryDate} />
-                  </div>
-                </div>
-              </div>
-            </SidebarSection>
-
             <div className="h-28" />
           </form>
 
           {/* Sticky bottom bar */}
           <div className="flex-shrink-0 border-t border-white/10 bg-[#163152] px-5 py-4">
-            <div className="text-xs text-blue-200/70 mb-3 flex flex-wrap gap-x-2 gap-y-1">
-              <span><span className="text-white/60">Material:</span> <span className="text-white font-semibold">{fmt(matBudget)}</span></span>
-              <span className="text-white/30">+</span>
-              <span><span className="text-white/60">Labor:</span> <span className="text-white font-semibold">{fmt(labBudget)}</span></span>
-              <span className="text-white/30">=</span>
-              <span className="text-blue-300 font-bold">Total: {fmt(totalBudget === 0 ? '' : totalBudget)}</span>
+            <div className="text-xs text-blue-200/70 mb-3">
+              <span className="text-blue-300 font-bold">Total Budget: {fmt(totalBudget === 0 ? '' : totalBudget)}</span>
+              <span className="text-white/40 ml-2">(all phases)</span>
             </div>
             <button type="submit" form="calc-form" disabled={isSubmitting}
               className="calc-btn w-full bg-[#3b82f6] hover:bg-[#2563eb] text-white py-2.5 rounded-xl
