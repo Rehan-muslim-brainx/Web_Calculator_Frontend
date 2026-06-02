@@ -755,27 +755,7 @@ export default function UserCalculator() {
       .finally(() => setLoadingCurves(false))
   }, [])
 
-  function checkPhaseOverlaps(phases) {
-    for (let i = 0; i < phases.length; i++) {
-      for (let j = i + 1; j < phases.length; j++) {
-        const a = phases[i], b = phases[j]
-        if (!a.startDate || !a.endDate || !b.startDate || !b.endDate) continue
-        const overlap = new Date(a.startDate) < new Date(b.endDate) &&
-                        new Date(b.startDate) < new Date(a.endDate)
-        if (overlap) return { i, j }
-      }
-    }
-    return null
-  }
-
   async function onSubmit(data) {
-    const overlap = checkPhaseOverlaps(data.phases)
-    if (overlap) {
-      const { i, j } = overlap
-      setError(`phases.${i}.startDate`, { type: 'manual', message: `This phase overlaps with Phase ${j + 1}` })
-      setError(`phases.${j}.startDate`, { type: 'manual', message: `This phase overlaps with Phase ${i + 1}` })
-      return
-    }
     const payload = {
       projectInfo: data.projectInfo,
       schedule: data.schedule,
